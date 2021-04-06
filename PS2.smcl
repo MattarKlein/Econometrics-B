@@ -1,16 +1,16 @@
 {smcl}
-{txt}{sf}{ul off}{.-}
+{com}{sf}{ul off}{txt}{.-}
       name:  {res}<unnamed>
-       {txt}log:  {res}C:\Users\MSKle\Desktop\Econometrics B\PS2.smcl
+       {txt}log:  {res}C:\Users\MSKle\Desktop\Econometrics-B\PS2.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 6 Apr 2021, 18:52:21
+ {txt}opened on:  {res} 6 Apr 2021, 18:58:57
 {txt}
-{com}. //_1q
+{com}. //_1
 . clear all
 {res}{txt}
 {com}. use "star_problem_set.dta"
 {txt}
-{com}. //_2q
+{com}. //_2
 . quietly gen sc = .
 {txt}
 {com}. quietly gen ra = .
@@ -23,7 +23,7 @@
 {txt}  6{com}. quietly eststo a_reg_`v'
 {txt}  7{com}. {c )-}
 {txt}
-{com}. //_3q
+{com}. //_3
 . label variable tssk "Kindergarden"
 {txt}
 {com}. label variable tss1 "1st Grade"
@@ -61,9 +61,9 @@
 . //_^
 . log close
       {txt}name:  {res}<unnamed>
-       {txt}log:  {res}C:\Users\MSKle\Desktop\Econometrics B\PS2.smcl
+       {txt}log:  {res}C:\Users\MSKle\Desktop\Econometrics-B\PS2.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res} 6 Apr 2021, 18:52:22
+ {txt}closed on:  {res} 6 Apr 2021, 18:58:58
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}

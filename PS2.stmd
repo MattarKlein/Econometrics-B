@@ -24,7 +24,7 @@ quietly regress tss`v' sc ra, robust
 quietly eststo a_reg_`v'
 }
 ```
-
+\newpage
 ```s
 label variable tssk "Kindergarden"
 label variable tss1 "1st Grade"
