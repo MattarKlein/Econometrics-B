@@ -1,0 +1,14 @@
+% This is a test
+% Wish me luck
+
+Crossed Fingers
+
+Code goes here:
+```s
+sysuse auto
+summarize weight
+graph twoway scatter weight mpg
+graph export test.png
+```
+
+![Fuel Efficiency by Weight](test.png)

@@ -1,0 +1,39 @@
+% PS2
+% Mattar Klein (328780168)
+
+*I am trying out using markstat package for better reproducability, All code and asnwers will be in the same document, I will include the .stmd file and the boot file I use for running it (you will need to change the directories*
+
+*Also, all files can be found on my github at https://github.com/MattarKlein/Econometrics-B.git*
+
+## Import Data
+```s
+clear all
+use "star_problem_set.dta"
+```
+## Question 1
+#### (a) Run Regression
+
+```s
+quietly gen sc = .
+quietly gen ra = .
+foreach v in k 1 2 3{
+quietly gen tss`v' = treadss`v' + tmathss`v'
+quietly replace sc = cltype`v' == 1
+quietly replace ra = cltype`v' == 3
+quietly regress tss`v' sc ra, robust
+quietly eststo a_reg_`v'
+}
+```
+
+```s
+label variable tssk "Kindergarden"
+label variable tss1 "1st Grade"
+label variable tss2 "2st Grade"
+label variable tss3 "3st Grade"
+label variable sc "Small Class"
+label variable ra "Regular + Ass"
+
+esttab a_reg_k a_reg_1 a_reg_2 a_reg_3, label
+//![Fuel Efficiency by Weight](test.pdf)
+```
+
