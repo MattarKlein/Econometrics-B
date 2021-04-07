@@ -3,7 +3,7 @@
       name:  {res}<unnamed>
        {txt}log:  {res}C:\Users\MSKle\Desktop\Econometrics-B\PS2.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 6 Apr 2021, 18:58:57
+ {txt}opened on:  {res} 7 Apr 2021, 10:43:59
 {txt}
 {com}. //_1
 . clear all
@@ -58,12 +58,56 @@
 {txt}* p<0.05, ** p<0.01, *** p<0.001
 
 {com}. //![Fuel Efficiency by Weight](test.pdf)
-. //_^
+. //_4
+. foreach v in k 1 2 3{c -(}
+{txt}  2{com}. quietly summarize tss`v'
+{txt}  3{com}. quietly gen tss`v'_normalized = (treadss`v' + tmathss`v')/r(sd)
+{txt}  4{com}. quietly replace sc = cltype`v' == 1
+{txt}  5{com}. quietly replace ra = cltype`v' == 3
+{txt}  6{com}. quietly regress tss`v'_normalized sc ra, robust
+{txt}  7{com}. quietly eststo b_reg_`v'
+{txt}  8{com}. {c )-}
+{txt}
+{com}. //_5
+. label variable tssk_normalized "Kindergarden Norm"
+{txt}
+{com}. label variable tss1_normalized "1st Grade Norm"
+{txt}
+{com}. label variable tss2_normalized "2st Grade Norm"
+{txt}
+{com}. label variable tss3_normalized "3st Grade Norm"
+{txt}
+{com}. label variable sc "Small Class"
+{txt}
+{com}. label variable ra "Regular + Ass"
+{txt}
+{com}. 
+. esttab b_reg_k b_reg_1 b_reg_2 b_reg_3, label
+{res}
+{txt}{hline 84}
+{txt}                              (1)             (2)             (3)             (4)   
+{txt}                     Kindergard~m    1st Grade ~m    2st Grade ~m    3st Grade ~m   
+{txt}{hline 84}
+{txt}Small Class         {res}        0.188***        0.326***        0.231***        0.213***{txt}
+                    {res} {ralign 12:{txt:(}5.66{txt:)}}    {ralign 12:{txt:(}10.52{txt:)}}    {ralign 12:{txt:(}7.15{txt:)}}    {ralign 12:{txt:(}6.51{txt:)}}   {txt}
+
+{txt}Regular + Ass       {res}      0.00426           0.131***       0.0414        -0.00397   {txt}
+                    {res} {ralign 12:{txt:(}0.14{txt:)}}    {ralign 12:{txt:(}4.51{txt:)}}    {ralign 12:{txt:(}1.37{txt:)}}    {ralign 12:{txt:(}-0.13{txt:)}}   {txt}
+
+{txt}Constant            {res}        12.45***        11.39***        13.77***        16.77***{txt}
+                    {res} {ralign 12:{txt:(}562.05{txt:)}}    {ralign 12:{txt:(}582.43{txt:)}}    {ralign 12:{txt:(}637.88{txt:)}}    {ralign 12:{txt:(}731.25{txt:)}}   {txt}
+{txt}{hline 84}
+{txt}Observations        {res}         5786            6379            6049            5967   {txt}
+{txt}{hline 84}
+{txt}t statistics in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. //_^
 . log close
       {txt}name:  {res}<unnamed>
        {txt}log:  {res}C:\Users\MSKle\Desktop\Econometrics-B\PS2.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res} 6 Apr 2021, 18:58:58
+ {txt}closed on:  {res} 7 Apr 2021, 10:44:00
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}

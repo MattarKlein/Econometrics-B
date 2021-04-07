@@ -11,7 +11,7 @@ clear all
 use "star_problem_set.dta"
 ```
 ## Question 1
-#### (a) Run Regression
+#### (a) Run Regression Basic Regression
 
 ```s
 quietly gen sc = .
@@ -36,4 +36,25 @@ label variable ra "Regular + Ass"
 esttab a_reg_k a_reg_1 a_reg_2 a_reg_3, label
 //![Fuel Efficiency by Weight](test.pdf)
 ```
+#### (b) Run Regression With Normalized Grades
+```s
+foreach v in k 1 2 3{
+quietly summarize tss`v'
+quietly gen tss`v'_normalized = (treadss`v' + tmathss`v')/r(sd)
+quietly replace sc = cltype`v' == 1
+quietly replace ra = cltype`v' == 3
+quietly regress tss`v'_normalized sc ra, robust
+quietly eststo b_reg_`v'
+}
+```
 
+```s
+label variable tssk_normalized "Kindergarden Norm"
+label variable tss1_normalized "1st Grade Norm"
+label variable tss2_normalized "2st Grade Norm"
+label variable tss3_normalized "3st Grade Norm"
+label variable sc "Small Class"
+label variable ra "Regular + Ass"
+
+esttab b_reg_k b_reg_1 b_reg_2 b_reg_3, label
+```
