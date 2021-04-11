@@ -1,9 +1,11 @@
 % PS2
 % Mattar Klein (328780168)
 
-*I am trying out using markstat package for better reproducability, All code and asnwers will be in the same document, I will include the .stmd file and the boot file I use for running it (you will need to change the directories*
+*I am trying out using markstat package for better reproducability, All code and asnwers will be in the same document, I will include the .stmd file and the boot file I use for running it (you will need to change the directories)*
 
-*Also, all files can be found on my github at https://github.com/MattarKlein/Econometrics-B.git*
+*Also, all files can be found on my github at:*
+
+*https://github.com/MattarKlein/Econometrics-B.git*
 
 ## Import Data
 ```s
@@ -24,37 +26,103 @@ quietly regress tss`v' sc ra, robust
 quietly eststo a_reg_`v'
 }
 ```
+
+The regression model is
+$$
+Y_i = \beta_0 + \beta_1 sc_i + \beta_2 ra_i + u_i
+$$
+
+Where $Y_i$ is the outcome variable done for 4 different grades (Kindergarden though 3rd), $sc_i$ is a binary variable for being randomized into a small class, and $ra_i$ is a binary variable for being randomized into a class with an assistant.
+
+Therefore, the constant term is the average total score of the control group (i.e. no assistant assigned and reduction in class size), and the coefficients of $sc_i$ and $ra_i$ are the change in total test scores for those groups respectively.
+
+As can be seen in the output table, being randomized into a small class has an effect across all classes and is largest in 1st grade.
+
 \newpage
+
 ```s
-label variable tssk "Kindergarden"
-label variable tss1 "1st Grade"
-label variable tss2 "2st Grade"
-label variable tss3 "3st Grade"
+label variable tssk "K"
+label variable tss1 "1st"
+label variable tss2 "2nd"
+label variable tss3 "3rd"
 label variable sc "Small Class"
 label variable ra "Regular + Ass"
 
-esttab a_reg_k a_reg_1 a_reg_2 a_reg_3, label
-//![Fuel Efficiency by Weight](test.pdf)
+esttab a_reg_k a_reg_1 a_reg_2 a_reg_3, label se ar2
 ```
-#### (b) Run Regression With Normalized Grades
+\newpage
+#### (b) Including controls
+
 ```s
+quietly gen totexp = .
+quietly gen ses = .
 foreach v in k 1 2 3{
-quietly summarize tss`v'
-quietly gen tss`v'_normalized = (treadss`v' + tmathss`v')/r(sd)
+quietly replace tss`v' = treadss`v' + tmathss`v'
 quietly replace sc = cltype`v' == 1
 quietly replace ra = cltype`v' == 3
-quietly regress tss`v'_normalized sc ra, robust
+quietly replace totexp = totexp`v'
+quietly replace ses = ses`v'
+quietly regress tss`v' sc ra totexp ssex srace ses, robust
 quietly eststo b_reg_`v'
 }
 ```
 
+The regression model is the same as before with added demographic controls for teacher experience and the gender race and socio-economic status of the student. 
+$$
+Y_i = \beta_0 + \beta_1 sc_i + \beta_2 ra_i + \beta_3 totexp_i + \beta_4 ssex_i + \beta_5 srace_i + \beta_6 ses_i + u_i
+$$
+
+Comparing the size of the coefficients of small class to the coefficients of different demographics shows that the effects aren't very big. Take socio-economic status for instance this is measured by whether the sutdent is entitled to a free lunch or not, the coefficients on this are systematically larger and more than double the effect of small class.
+
+The standard errors on $sc_i$ went down for all coefficients, this is b/c by adding more controls the model is getting more exact. Also the adjusted R-Squared has gone up by quite a lot.
+
+
 ```s
-label variable tssk_normalized "Kindergarden Norm"
-label variable tss1_normalized "1st Grade Norm"
-label variable tss2_normalized "2st Grade Norm"
-label variable tss3_normalized "3st Grade Norm"
+label variable tssk "K"
+label variable tss1 "1st"
+label variable tss2 "2nd"
+label variable tss3 "3rd"
 label variable sc "Small Class"
 label variable ra "Regular + Ass"
+label variable totexp "Exp Teacher"
+label variable ssex "Gender"
+label variable srace "Race"
+label variable ses "SE status"
 
-esttab b_reg_k b_reg_1 b_reg_2 b_reg_3, label
+esttab b_reg_k b_reg_1 b_reg_2 b_reg_3, label se ar2
 ```
+
+\newpage
+
+#### (c) Test for randomization
+
+```s
+foreach v in k 1 2 3{
+quietly replace sc = cltype`v' == 1
+quietly replace ra = cltype`v' == 3
+quietly replace ses = ses`v'
+quietly regress totexp`v' sc ra, robust
+quietly eststo c_reg_`v'_exp
+quietly regress ssex sc ra, robust
+quietly eststo c_reg_`v'_ssex
+quietly regress srace sc ra, robust
+quietly eststo c_reg_`v'_srace
+quietly regress ses sc ra, robust
+quietly eststo c_reg_`v'_ses
+}
+```
+
+The following tables check the distribution of observables among different test groups. It seems that while some of the randomizations (like gender) did actually randomize across demographics there were some demographics which weren't split randomly (specifically race and teacher experience). 
+
+```s
+label variable totexpk "Exp K"
+label variable totexp1 "Exp 1st"
+label variable totexp2 "Exp 2nd"
+label variable totexp3 "Exp 3rd"
+esttab c_reg_k_exp c_reg_1_exp c_reg_2_exp c_reg_3_exp, label se
+esttab c_reg_k_ssex c_reg_1_ssex c_reg_2_ssex c_reg_3_ssex, label se
+esttab c_reg_k_srace c_reg_1_srace c_reg_2_srace c_reg_3_srace, label se
+esttab c_reg_k_ses c_reg_1_ses c_reg_2_ses c_reg_3_ses, label se
+```
+
+

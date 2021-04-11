@@ -3,7 +3,7 @@
       name:  {res}<unnamed>
        {txt}log:  {res}C:\Users\MSKle\Desktop\Econometrics-B\PS2.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 7 Apr 2021, 10:43:59
+ {txt}opened on:  {res}11 Apr 2021, 13:51:18
 {txt}
 {com}. //_1
 . clear all
@@ -24,82 +24,212 @@
 {txt}  7{com}. {c )-}
 {txt}
 {com}. //_3
-. label variable tssk "Kindergarden"
+. label variable tssk "K"
 {txt}
-{com}. label variable tss1 "1st Grade"
+{com}. label variable tss1 "1st"
 {txt}
-{com}. label variable tss2 "2st Grade"
+{com}. label variable tss2 "2nd"
 {txt}
-{com}. label variable tss3 "3st Grade"
+{com}. label variable tss3 "3rd"
 {txt}
 {com}. label variable sc "Small Class"
 {txt}
 {com}. label variable ra "Regular + Ass"
 {txt}
 {com}. 
-. esttab a_reg_k a_reg_1 a_reg_2 a_reg_3, label
+. esttab a_reg_k a_reg_1 a_reg_2 a_reg_3, label se ar2
 {res}
 {txt}{hline 84}
 {txt}                              (1)             (2)             (3)             (4)   
-{txt}                     Kindergarden       1st Grade       2st Grade       3st Grade   
+{txt}                                K             1st             2nd             3rd   
 {txt}{hline 84}
 {txt}Small Class         {res}        13.90***        29.78***        19.39***        15.59***{txt}
-                    {res} {ralign 12:{txt:(}5.66{txt:)}}    {ralign 12:{txt:(}10.52{txt:)}}    {ralign 12:{txt:(}7.15{txt:)}}    {ralign 12:{txt:(}6.51{txt:)}}   {txt}
+                    {res} {ralign 12:{txt:(}2.454{txt:)}}    {ralign 12:{txt:(}2.831{txt:)}}    {ralign 12:{txt:(}2.712{txt:)}}    {ralign 12:{txt:(}2.396{txt:)}}   {txt}
 
 {txt}Regular + Ass       {res}        0.314           11.96***        3.479          -0.291   {txt}
-                    {res} {ralign 12:{txt:(}0.14{txt:)}}    {ralign 12:{txt:(}4.51{txt:)}}    {ralign 12:{txt:(}1.37{txt:)}}    {ralign 12:{txt:(}-0.13{txt:)}}   {txt}
+                    {res} {ralign 12:{txt:(}2.271{txt:)}}    {ralign 12:{txt:(}2.652{txt:)}}    {ralign 12:{txt:(}2.545{txt:)}}    {ralign 12:{txt:(}2.273{txt:)}}   {txt}
 
 {txt}Constant            {res}        918.0***       1039.4***       1157.8***       1228.5***{txt}
-                    {res} {ralign 12:{txt:(}562.05{txt:)}}    {ralign 12:{txt:(}582.43{txt:)}}    {ralign 12:{txt:(}637.88{txt:)}}    {ralign 12:{txt:(}731.25{txt:)}}   {txt}
+                    {res} {ralign 12:{txt:(}1.633{txt:)}}    {ralign 12:{txt:(}1.785{txt:)}}    {ralign 12:{txt:(}1.815{txt:)}}    {ralign 12:{txt:(}1.680{txt:)}}   {txt}
 {txt}{hline 84}
 {txt}Observations        {res}         5786            6379            6049            5967   {txt}
+{txt}Adjusted R-squared  {res}        0.007           0.017           0.009           0.010   {txt}
 {txt}{hline 84}
-{txt}t statistics in parentheses
+{txt}Standard errors in parentheses
 {txt}* p<0.05, ** p<0.01, *** p<0.001
 
-{com}. //![Fuel Efficiency by Weight](test.pdf)
-. //_4
-. foreach v in k 1 2 3{c -(}
-{txt}  2{com}. quietly summarize tss`v'
-{txt}  3{com}. quietly gen tss`v'_normalized = (treadss`v' + tmathss`v')/r(sd)
-{txt}  4{com}. quietly replace sc = cltype`v' == 1
-{txt}  5{com}. quietly replace ra = cltype`v' == 3
-{txt}  6{com}. quietly regress tss`v'_normalized sc ra, robust
-{txt}  7{com}. quietly eststo b_reg_`v'
-{txt}  8{com}. {c )-}
+{com}. //_4
+. quietly gen totexp = .
+{txt}
+{com}. quietly gen ses = .
+{txt}
+{com}. foreach v in k 1 2 3{c -(}
+{txt}  2{com}. quietly replace tss`v' = treadss`v' + tmathss`v'
+{txt}  3{com}. quietly replace sc = cltype`v' == 1
+{txt}  4{com}. quietly replace ra = cltype`v' == 3
+{txt}  5{com}. quietly replace totexp = totexp`v'
+{txt}  6{com}. quietly replace ses = ses`v'
+{txt}  7{com}. quietly regress tss`v' sc ra totexp ssex srace ses, robust
+{txt}  8{com}. quietly eststo b_reg_`v'
+{txt}  9{com}. {c )-}
 {txt}
 {com}. //_5
-. label variable tssk_normalized "Kindergarden Norm"
+. label variable tssk "K"
 {txt}
-{com}. label variable tss1_normalized "1st Grade Norm"
+{com}. label variable tss1 "1st"
 {txt}
-{com}. label variable tss2_normalized "2st Grade Norm"
+{com}. label variable tss2 "2nd"
 {txt}
-{com}. label variable tss3_normalized "3st Grade Norm"
+{com}. label variable tss3 "3rd"
 {txt}
 {com}. label variable sc "Small Class"
 {txt}
 {com}. label variable ra "Regular + Ass"
 {txt}
+{com}. label variable totexp "Exp Teacher"
+{txt}
+{com}. label variable ssex "Gender"
+{txt}
+{com}. label variable srace "Race"
+{txt}
+{com}. label variable ses "SE status"
+{txt}
 {com}. 
-. esttab b_reg_k b_reg_1 b_reg_2 b_reg_3, label
+. esttab b_reg_k b_reg_1 b_reg_2 b_reg_3, label se ar2
 {res}
 {txt}{hline 84}
 {txt}                              (1)             (2)             (3)             (4)   
-{txt}                     Kindergard~m    1st Grade ~m    2st Grade ~m    3st Grade ~m   
+{txt}                                K             1st             2nd             3rd   
 {txt}{hline 84}
-{txt}Small Class         {res}        0.188***        0.326***        0.231***        0.213***{txt}
-                    {res} {ralign 12:{txt:(}5.66{txt:)}}    {ralign 12:{txt:(}10.52{txt:)}}    {ralign 12:{txt:(}7.15{txt:)}}    {ralign 12:{txt:(}6.51{txt:)}}   {txt}
+{txt}Small Class         {res}        14.17***        24.80***        16.78***        11.99***{txt}
+                    {res} {ralign 12:{txt:(}2.354{txt:)}}    {ralign 12:{txt:(}2.625{txt:)}}    {ralign 12:{txt:(}2.544{txt:)}}    {ralign 12:{txt:(}2.277{txt:)}}   {txt}
 
-{txt}Regular + Ass       {res}      0.00426           0.131***       0.0414        -0.00397   {txt}
-                    {res} {ralign 12:{txt:(}0.14{txt:)}}    {ralign 12:{txt:(}4.51{txt:)}}    {ralign 12:{txt:(}1.37{txt:)}}    {ralign 12:{txt:(}-0.13{txt:)}}   {txt}
+{txt}Regular + Ass       {res}        0.776           8.250***        4.811*         -0.524   {txt}
+                    {res} {ralign 12:{txt:(}2.156{txt:)}}    {ralign 12:{txt:(}2.459{txt:)}}    {ralign 12:{txt:(}2.385{txt:)}}    {ralign 12:{txt:(}2.146{txt:)}}   {txt}
 
-{txt}Constant            {res}        12.45***        11.39***        13.77***        16.77***{txt}
-                    {res} {ralign 12:{txt:(}562.05{txt:)}}    {ralign 12:{txt:(}582.43{txt:)}}    {ralign 12:{txt:(}637.88{txt:)}}    {ralign 12:{txt:(}731.25{txt:)}}   {txt}
+{txt}Exp Teacher         {res}        1.117***        0.235*          0.124          0.0784   {txt}
+                    {res} {ralign 12:{txt:(}0.169{txt:)}}    {ralign 12:{txt:(}0.112{txt:)}}    {ralign 12:{txt:(}0.113{txt:)}}    {ralign 12:{txt:(}0.105{txt:)}}   {txt}
+
+{txt}Gender              {res}        13.98***        11.91***        10.47***        7.654***{txt}
+                    {res} {ralign 12:{txt:(}1.850{txt:)}}    {ralign 12:{txt:(}2.090{txt:)}}    {ralign 12:{txt:(}2.020{txt:)}}    {ralign 12:{txt:(}1.783{txt:)}}   {txt}
+
+{txt}Race                {res}       -10.36***       -27.97***       -31.55***       -20.06***{txt}
+                    {res} {ralign 12:{txt:(}2.063{txt:)}}    {ralign 12:{txt:(}2.789{txt:)}}    {ralign 12:{txt:(}3.145{txt:)}}    {ralign 12:{txt:(}2.616{txt:)}}   {txt}
+
+{txt}SE status           {res}        34.95***        56.98***        46.00***        42.02***{txt}
+                    {res} {ralign 12:{txt:(}2.013{txt:)}}    {ralign 12:{txt:(}2.431{txt:)}}    {ralign 12:{txt:(}2.511{txt:)}}    {ralign 12:{txt:(}2.151{txt:)}}   {txt}
+
+{txt}Constant            {res}        847.5***        974.5***       1115.0***       1181.2***{txt}
+                    {res} {ralign 12:{txt:(}6.044{txt:)}}    {ralign 12:{txt:(}7.459{txt:)}}    {ralign 12:{txt:(}8.124{txt:)}}    {ralign 12:{txt:(}6.940{txt:)}}   {txt}
 {txt}{hline 84}
-{txt}Observations        {res}         5786            6379            6049            5967   {txt}
+{txt}Observations        {res}         5748            6227            5707            5733   {txt}
+{txt}Adjusted R-squared  {res}        0.101           0.184           0.171           0.144   {txt}
 {txt}{hline 84}
-{txt}t statistics in parentheses
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. //_6
+. foreach v in k 1 2 3{c -(}
+{txt}  2{com}. quietly replace sc = cltype`v' == 1
+{txt}  3{com}. quietly replace ra = cltype`v' == 3
+{txt}  4{com}. quietly replace ses = ses`v'
+{txt}  5{com}. quietly regress totexp`v' sc ra, robust
+{txt}  6{com}. quietly eststo c_reg_`v'_exp
+{txt}  7{com}. quietly regress ssex sc ra, robust
+{txt}  8{com}. quietly eststo c_reg_`v'_ssex
+{txt}  9{com}. quietly regress srace sc ra, robust
+{txt} 10{com}. quietly eststo c_reg_`v'_srace
+{txt} 11{com}. quietly regress ses sc ra, robust
+{txt} 12{com}. quietly eststo c_reg_`v'_ses
+{txt} 13{com}. {c )-}
+{txt}
+{com}. //_7
+. label variable totexpk "Exp K"
+{txt}
+{com}. label variable totexp1 "Exp 1st"
+{txt}
+{com}. label variable totexp2 "Exp 2nd"
+{txt}
+{com}. label variable totexp3 "Exp 3rd"
+{txt}
+{com}. esttab c_reg_k_exp c_reg_1_exp c_reg_2_exp c_reg_3_exp, label se
+{res}
+{txt}{hline 84}
+{txt}                              (1)             (2)             (3)             (4)   
+{txt}                            Exp K         Exp 1st         Exp 2nd         Exp 3rd   
+{txt}{hline 84}
+{txt}Small Class         {res}       -0.149           1.899***        0.311          -0.172   {txt}
+                    {res} {ralign 12:{txt:(}0.181{txt:)}}    {ralign 12:{txt:(}0.262{txt:)}}    {ralign 12:{txt:(}0.268{txt:)}}    {ralign 12:{txt:(}0.265{txt:)}}   {txt}
+
+{txt}Regular + Ass       {res}        0.670***        2.353***        1.102***        1.335***{txt}
+                    {res} {ralign 12:{txt:(}0.175{txt:)}}    {ralign 12:{txt:(}0.257{txt:)}}    {ralign 12:{txt:(}0.250{txt:)}}    {ralign 12:{txt:(}0.254{txt:)}}   {txt}
+
+{txt}Constant            {res}        9.068***        10.30***        12.66***        13.49***{txt}
+                    {res} {ralign 12:{txt:(}0.122{txt:)}}    {ralign 12:{txt:(}0.171{txt:)}}    {ralign 12:{txt:(}0.182{txt:)}}    {ralign 12:{txt:(}0.189{txt:)}}   {txt}
+{txt}{hline 84}
+{txt}Observations        {res}         6304            6810            6738            6751   {txt}
+{txt}{hline 84}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. esttab c_reg_k_ssex c_reg_1_ssex c_reg_2_ssex c_reg_3_ssex, label se
+{res}
+{txt}{hline 84}
+{txt}                              (1)             (2)             (3)             (4)   
+{txt}                           Gender          Gender          Gender          Gender   
+{txt}{hline 84}
+{txt}Small Class         {res}       0.0217          0.0176          0.0250*         0.0232   {txt}
+                    {res} {ralign 12:{txt:(}0.0128{txt:)}}    {ralign 12:{txt:(}0.0128{txt:)}}    {ralign 12:{txt:(}0.0126{txt:)}}    {ralign 12:{txt:(}0.0123{txt:)}}   {txt}
+
+{txt}Regular + Ass       {res}       0.0187         0.00230          0.0108         0.00287   {txt}
+                    {res} {ralign 12:{txt:(}0.0121{txt:)}}    {ralign 12:{txt:(}0.0119{txt:)}}    {ralign 12:{txt:(}0.0116{txt:)}}    {ralign 12:{txt:(}0.0116{txt:)}}   {txt}
+
+{txt}Constant            {res}        1.464***        1.468***        1.465***        1.466***{txt}
+                    {res} {ralign 12:{txt:(}0.00578{txt:)}}    {ralign 12:{txt:(}0.00582{txt:)}}    {ralign 12:{txt:(}0.00593{txt:)}}    {ralign 12:{txt:(}0.00602{txt:)}}   {txt}
+{txt}{hline 84}
+{txt}Observations        {res}        11578           11578           11578           11578   {txt}
+{txt}{hline 84}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. esttab c_reg_k_srace c_reg_1_srace c_reg_2_srace c_reg_3_srace, label se
+{res}
+{txt}{hline 84}
+{txt}                              (1)             (2)             (3)             (4)   
+{txt}                             Race            Race            Race            Race   
+{txt}{hline 84}
+{txt}Small Class         {res}      -0.0803***      -0.0895***      -0.0665***      -0.0902***{txt}
+                    {res} {ralign 12:{txt:(}0.0139{txt:)}}    {ralign 12:{txt:(}0.0139{txt:)}}    {ralign 12:{txt:(}0.0135{txt:)}}    {ralign 12:{txt:(}0.0130{txt:)}}   {txt}
+
+{txt}Regular + Ass       {res}      -0.0633***       -0.116***      -0.0386**       -0.0577***{txt}
+                    {res} {ralign 12:{txt:(}0.0128{txt:)}}    {ralign 12:{txt:(}0.0128{txt:)}}    {ralign 12:{txt:(}0.0128{txt:)}}    {ralign 12:{txt:(}0.0123{txt:)}}   {txt}
+
+{txt}Constant            {res}        1.415***        1.427***        1.409***        1.419***{txt}
+                    {res} {ralign 12:{txt:(}0.00658{txt:)}}    {ralign 12:{txt:(}0.00656{txt:)}}    {ralign 12:{txt:(}0.00671{txt:)}}    {ralign 12:{txt:(}0.00702{txt:)}}   {txt}
+{txt}{hline 84}
+{txt}Observations        {res}        11453           11453           11453           11453   {txt}
+{txt}{hline 84}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. esttab c_reg_k_ses c_reg_1_ses c_reg_2_ses c_reg_3_ses, label se
+{res}
+{txt}{hline 84}
+{txt}                              (1)             (2)             (3)             (4)   
+{txt}                        SE status       SE status       SE status       SE status   
+{txt}{hline 84}
+{txt}Small Class         {res}      0.00622          0.0418**        0.0451**        0.0334*  {txt}
+                    {res} {ralign 12:{txt:(}0.0157{txt:)}}    {ralign 12:{txt:(}0.0152{txt:)}}    {ralign 12:{txt:(}0.0155{txt:)}}    {ralign 12:{txt:(}0.0157{txt:)}}   {txt}
+
+{txt}Regular + Ass       {res}      -0.0256         0.00609          0.0130       -0.000146   {txt}
+                    {res} {ralign 12:{txt:(}0.0151{txt:)}}    {ralign 12:{txt:(}0.0145{txt:)}}    {ralign 12:{txt:(}0.0148{txt:)}}    {ralign 12:{txt:(}0.0151{txt:)}}   {txt}
+
+{txt}Constant            {res}        1.523***        1.470***        1.468***        1.484***{txt}
+                    {res} {ralign 12:{txt:(}0.0107{txt:)}}    {ralign 12:{txt:(}0.00992{txt:)}}    {ralign 12:{txt:(}0.0106{txt:)}}    {ralign 12:{txt:(}0.0113{txt:)}}   {txt}
+{txt}{hline 84}
+{txt}Observations        {res}         6302            6651            6496            6520   {txt}
+{txt}{hline 84}
+{txt}Standard errors in parentheses
 {txt}* p<0.05, ** p<0.01, *** p<0.001
 
 {com}. //_^
@@ -107,7 +237,7 @@
       {txt}name:  {res}<unnamed>
        {txt}log:  {res}C:\Users\MSKle\Desktop\Econometrics-B\PS2.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res} 7 Apr 2021, 10:44:00
+ {txt}closed on:  {res}11 Apr 2021, 13:51:19
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}
