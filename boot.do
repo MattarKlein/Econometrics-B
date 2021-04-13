@@ -7,5 +7,5 @@ whereis pdflatex "C:\Program Files\MikTeX\miktex\bin\x64\pdflatex.exe" //need to
 //This is the do file for quickly creating htmls
 cd "C:\Users\MSKle\Desktop\Econometrics-B"
 set linesize 96
-markstat using PS2, pdf //replace this with file needed
+markstat using PS2, pdf mathjax //replace this with file needed
 //bundle using PS2 //This is used when there are images in html

@@ -78,16 +78,10 @@ The standard errors on $sc_i$ went down for all coefficients, this is b/c by add
 
 
 ```s
-label variable tssk "K"
-label variable tss1 "1st"
-label variable tss2 "2nd"
-label variable tss3 "3rd"
-label variable sc "Small Class"
-label variable ra "Regular + Ass"
 label variable totexp "Exp Teacher"
-label variable ssex "Gender"
-label variable srace "Race"
-label variable ses "SE status"
+label variable ssex "Female"
+label variable srace "Black"
+label variable ses "Lower SE status"
 
 esttab b_reg_k b_reg_1 b_reg_2 b_reg_3, label se ar2
 ```
@@ -125,4 +119,58 @@ esttab c_reg_k_srace c_reg_1_srace c_reg_2_srace c_reg_3_srace, label se
 esttab c_reg_k_ses c_reg_1_ses c_reg_2_ses c_reg_3_ses, label se
 ```
 
+\newpage
+
+#### (d) Treatment Heterogeneity
+
+```s
+quietly gen sc_totexp = .
+quietly gen sc_ssex = .
+quietly gen sc_srace = .
+quietly gen sc_ses = .
+foreach v in k 1 2 3{
+quietly replace tss`v' = treadss`v' + tmathss`v'
+quietly replace sc = cltype`v' == 1
+quietly replace ra = cltype`v' == 3
+quietly replace totexp = totexp`v'
+quietly replace ses = ses`v'
+quietly replace sc_totexp = sc*totexp
+quietly replace sc_ssex = sc*ssex
+quietly replace sc_srace = sc*srace
+quietly replace sc_ses = sc*ses
+quietly regress tss`v' sc ra totexp sc_totexp ssex sc_ssex srace sc_srace ses sc_ses, robust
+quietly eststo d_reg_`v'
+}
+```
+
+In order to account for heterogeniety across students with different co-variates I have added interaction terms for the 4 observed demographics with small class. It does not seem like there is much heterogeniety in the sample. However, as can be seen in the previous question, I am not very convinced about the randomization anymore.
+
+```s
+label variable sc_totexp "SC X Exp"
+label variable sc_ssex "SC X Female"
+label variable sc_srace "SC X Black"
+label variable sc_ses "SC X Lower SE status"
+
+esttab d_reg_k d_reg_1 d_reg_2 d_reg_3, label se ar2
+```
+
+#### (e)
+
+As I stated before I am not convinced about the randomization, it seems that there was some confounding factor which affected the randomization (or maybe just chance). My guess is that after the randomization there was some movement between treatments. This kind of movement will only be made worse in a real world environment if only some classes actually reduce size. Additionally if all classes reduce size then I am not sure how good the estimates actually help.
+
+However, the experiment might be usefull for policy if researches try to go back and understand how such changes were done, and how they affected different demographic groups after the fact.
+
+## Question 2
+$$
+Y_{0i} \perp D_i \rightarrow E[Y_{0i} | D_i = 0] = E[Y_{0i} | D_i = 1]
+$$
+
+Adding this to the definition of ATT (1), we get:
+$$
+ATT = E[Y_{1i} | D_i = 1] - E[Y_{0i} | D_i = 1] \overset{(1)}{=} E[Y_{1i} | D_i = 1] - E[Y_{0i} | D_i = 0]
+$$
+
+## Question 3
+
+#### (a)
 
