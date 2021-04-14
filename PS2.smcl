@@ -3,7 +3,7 @@
       name:  {res}<unnamed>
        {txt}log:  {res}C:\Users\MSKle\Desktop\Econometrics-B\PS2.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}13 Apr 2021, 10:30:46
+ {txt}opened on:  {res}14 Apr 2021, 18:17:46
 {txt}
 {com}. //_1
 . clear all
@@ -303,7 +303,7 @@
       {txt}name:  {res}<unnamed>
        {txt}log:  {res}C:\Users\MSKle\Desktop\Econometrics-B\PS2.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res}13 Apr 2021, 10:30:47
+ {txt}closed on:  {res}14 Apr 2021, 18:17:47
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}

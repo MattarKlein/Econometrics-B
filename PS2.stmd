@@ -174,3 +174,82 @@ $$
 
 #### (a)
 
+$$
+\tau_i = Y_{1i} - Y_{0i} = \beta_0 + \beta_1 + \beta_2 v_i + u_i - \beta_0 - u_i = \beta_1 + \beta_2 v_i
+$$
+
+#### (b)
+
+
+* $\tau_{ATE} = E[Y_{1i}] - E[Y_{0i}] = \beta_1 + \beta_2 E[v_i]$
+
+* $\tau_{ATT} = E[Y_{1i}|D_i = 1] - E[Y_{0i}|D_i = 1] = \beta_1 + \beta_2 E[v_i|D_i = 1]$
+
+* $\tau_{ATU} = E[Y_{1i}|D_i = 0] - E[Y_{0i}|D_i = 0] = \beta_1 + \beta_2 E[v_i|D_i = 0]$
+
+#### (i)
+
+$$
+E[Y_{0i}|D_i = 1] = \beta_0 + E[u_i|D_i = 1]
+$$
+
+$$
+E[Y_{0i}|D_i = 0] = \beta_0 + E[u_i|D_i = 0]
+$$
+
+This means that the assumption is equivelent to $E[u_i|D_i = 1] = E[u_i|D_i = 0]$, i.e. independance of $u_i$ and $D_i$.
+
+#### (ii)
+
+$$
+E[Y_{1i}|D_i = 1] - E[Y_{0i}|D_i = 0] = \beta_0 + \beta_1 + \beta_2 E[v_i | D_i = 1] + E[u_i|D_i =1] - \beta_0 - E[u_i|D_i = 0] =
+$$
+
+$$
+= \beta_1 + \beta_2 E[v_i | D_i = 1]
+$$
+#### (iii)
+
+Looking at the previous equation and the equation for the ATE - the assumption needed is that $v_i$ is independant of $D_i$
+
+#### (c)
+
+$$
+\gamma_1 = mean_i(Y|D_i = 1) - mean_i(Y|D_i = 0) \rightarrow^p E[Y_i | D_i = 1] - E[Y_i | D_i = 0]
+$$
+
+## Question 4
+
+#### (a)
+
+$$
+E[Y_{1i}] - E[Y_{0i}] = \beta_0 + \beta_1 E[I(\eta_i = \eta_2)] + \beta_2 E[\eta_i] + E[\epsilon_i] - \beta_0 - \beta_2 E[\eta_i] - E[\epsilon_i] =
+$$
+
+$$
+\beta_1 PR(\eta_i = \eta_2)
+$$
+
+The treatment $D_i$ has no effect on $W_i$ so ATE is 0.
+
+#### (b)
+
+$$
+E[Y_i|D_i =1] - E[Y_i|D_i=0] = \beta_1 PR(\eta_i = \eta_2 | D_i = 1) + \beta_2 E[\eta_i | D_i = 1] - \beta_2 E[\eta_i |D_i=0] =
+$$
+
+$$
+= \beta_1 + \beta_2(\eta_2 - \eta_1)
+$$
+
+This does not converge to ATE b/c the assignment to treatment is non-random.
+
+#### (c)
+
+#### (i)
+
+The first one without $Y_i > 20$ does give the ATE. Unfortunately we can only observe $Y_i > 20$ so we do not have a sample equivilent for the ATE.
+
+#### (ii)
+
+This does not yeild the ATE for $W_i$ seeing as getting treatment might push you over the hump of $Y_i > 20$ so it will look like there is a positive affect.
