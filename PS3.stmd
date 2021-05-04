@@ -1,0 +1,313 @@
+% PS3
+% Mattar Klein (328780168)
+
+*All files can be found on my github at:*
+
+*https://github.com/MattarKlein/Econometrics-B.git*
+
+## Question 1
+
+#### (a)
+$$
+E[D_i|Y_{1i},Y_{0i},X_i] = 1 \cdot P(D_i = 1|Y_{1i},Y_{0i},X_i)  + 0 \cdot P(D_i = 0|Y_{1i},Y_{0i},X_i)  = P(D_i = 1|Y_{1i},Y_{0i},X_i) 
+$$
+
+#### (b)
+$$
+E[D_i|Y_{1i},Y_{0i},p(X_i)] = E[E[D_i|Y_{1i},Y_{0i},p(X_i),X_i]] =  E[E[D_i|X_i]|Y_{1i},Y_{0i},p(X_i)]
+$$
+
+Where the second equality is b/c of the independence of $\{Y_{1i},Y_{0i}\}$ and $D_i|X_i$.
+
+#### (c)
+$$
+E[D_i | X_i] = Pr(D_i = 1|X_i) = p(X_i)
+$$
+$$
+\rightarrow E[D_i | Y_{1i}, Y_{0i},p(X_i)] = E[E[D_i|X_i]|Y_{1i},Y_{0i},p(X_i)] =
+$$
+$$
+E[p(X_i)|Y_{1i},Y_{0i},p(X_i)] = p(X_i) = E[D_i | X_i]
+$$
+
+## Question 2
+
+#### (a)
+
+Import data
+```s
+clear all
+use "nswre74.dta"
+append using "cps1re74.dta", gen(obs)
+```
+
+\newpage
+
+Regress (linearly)observable characteristics on treatment in experimental data:
+```s
+quietly gen age_2 = age^2
+local i = 1
+foreach var in age age_2 ed black hisp married nodeg re74 re75 {
+quietly regress `var' treat if obs == 0, r
+eststo a_reg_`i'
+local ++i
+}
+```
+
+Repeat regression
+
+```s
+foreach var in age age_2 ed black hisp married nodeg re74 re75 {
+quietly regress `var' treat if obs == 1, r
+eststo a_reg_`i'
+local ++i
+}
+```
+
+I will now look at all the observables to see if they are blanced.
+
+Results experimental
+
+
+```s
+forvalues j = 1/3{
+	local k = 3*(`j')-2
+	local r = 3*(`j')-1
+	local t = 3*(`j')
+esttab a_reg_`k' a_reg_`r' a_reg_`t', se
+}
+```
+Results observational
+```s
+forvalues j = 3/6{
+	local k = 3*(`j')-2
+	local r = 3*(`j')-1
+	local t = 3*(`j')
+esttab a_reg_`k' a_reg_`r' a_reg_`t', se
+}
+```
+
+After that long list it seems that the expermental is pretty balanced (after doing so many regressions it makes sense to have some things be statistically significant), however the observational data is not well balanced.
+
+#### (b)
+Run regression without and with controls
+```s
+quietly regress re78 treat if obs == 0, r
+eststo b_reg_1
+quietly regress re78 treat age age_2 ed nodeg married black hisp  if obs == 0, r
+eststo b_reg_2
+quietly regress re78 treat age age_2 ed nodeg married black hisp re74 re75  if obs == 0, r
+eststo b_reg_3
+```
+
+```s
+quietly regress re78 treat if obs == 1, r
+eststo b_reg_4
+quietly regress re78 treat age age_2 ed nodeg married black if obs == 1, r
+eststo b_reg_5
+quietly regress re78 treat age age_2 ed nodeg married black hisp re74 re75 if obs == 1, r
+eststo b_reg_6
+```
+
+\newpage
+
+Results - experimental
+```s
+esttab b_reg_1 b_reg_2 b_reg_3, se
+
+```
+
+\newpage
+
+Results - observational
+```s
+esttab b_reg_4 b_reg_5 b_reg_6, se
+```
+
+The signs in the different datasets are oposite until controlling for all observables which is another sign that the observational data is not well balanced. Even then the effects in the expermiental data seem higher.
+
+#### (c)
+```s
+quietly regress treat age age_2 ed nodeg married black re74 re75 if obs == 1, r
+eststo c_reg_1
+quietly predict lm_prop
+quietly logit treat age age_2 ed nodeg married black re74 re75 if obs == 1, vce(robust)
+eststo c_reg_2
+quietly predict log_prop
+quietly probit treat age age_2 ed nodeg married black re74 re75 if obs == 1, vce(robust)
+eststo c_reg_3
+quietly predict pro_prop
+```
+
+Results
+```s
+esttab c_reg_1 c_reg_2 c_reg_3, se
+```
+
+```s
+kdensity pro_prop, nograph generate(x fx)
+kdensity pro_prop if obs == 1 & treat == 1, nograph generate(fx0) at (x)
+kdensity pro_prop if obs == 1 & treat == 0, nograph generate(fx1) at (x)
+label var fx0 "Treatment"
+label var fx1 "Control"
+line fx0 fx1 x, sort ytitle(Density)
+graph export dens.pdf, replace
+```
+
+
+![Density](dens.pdf)
+
+It looks like everything is around 0. I will try to get a better picture by looking at <0.1.
+
+```s
+kdensity pro_prop, nograph generate(y gy)
+kdensity pro_prop if obs == 1 & treat == 1 & pro_prop > 0.1, nograph generate(gy0) at (y)
+kdensity pro_prop if obs == 1 & treat == 0 & pro_prop > 0.1, nograph generate(gy1) at (y)
+label var gy0 "Treatment"
+label var gy1 "Control"
+line gy0 gy1 y, sort ytitle(Density >0.1)
+graph export dens2.pdf, replace
+```
+
+![Density](dens2.pdf)
+
+It seems that the control in this case is ditributed very differently from the treatment.
+
+#### (d)
+
+```s
+quietly regress re78 treat age age_2 ed nodeg married black hisp re74 re75  if obs == 0 & pro_prop > 0.1, r
+eststo d_reg_1
+quietly regress re78 treat age age_2 ed nodeg married black hisp re74 re75  if obs == 1 & pro_prop > 0.1, r
+eststo d_reg_2
+quietly regress re78 treat age age_2 ed nodeg married black hisp re74 re75  if obs == 0 & pro_prop > 0.2, r
+eststo d_reg_3
+quietly regress re78 treat age age_2 ed nodeg married black hisp re74 re75  if obs == 1 & pro_prop > 0.2, r
+eststo d_reg_4
+esttab d_reg_1 d_reg_2 d_reg_3 d_reg_4, se
+```
+
+Columns (1) and (2) are the same regression on experimental data and observational data respectivley, restricted to propenisty score greater than 0.1. Columns (2) and (3) repeat the same thing for propenisty score greater than 0.2.
+
+It seems that we are loosing a big part of the sample and the effects are still similar.
+
+#### (e)
+
+```s
+*teffects psmatch (re78) (treat age age_2 ed nodeg married black hisp re74 re75, logit) if obs == 0 & log_prop > 0.1, vce(robust)
+*eststo e_reg_1
+teffects psmatch (re78) (treat age age_2 ed nodeg married black hisp re74 re75, probit) if obs == 0 & pro_prop > 0.2, vce(robust)
+eststo e_reg_2
+esttab e_reg_2, se
+```
+
+This is not feasible for the full sample b/c we have so many ppl close to 0 propensity scroe. For some reason I couldn't get the first regression to work I tried logit and probit, both refused to work. Other than that the results are similar.
+
+
+## Question 3
+
+## Import Data
+```s
+clear all
+use "IPUMS.dta"
+
+*clean data*
+drop if (year == 1960 & hrswork2 <= 1) | (year != 1960 & uhrswork <= 14)
+replace uhrswork = 22 if year == 1960 & hrswork2 == 2
+replace uhrswork = 32 if year == 1960 & hrswork2 == 3
+replace uhrswork = 37 if year == 1960 & hrswork2 == 4
+replace uhrswork = 40 if year == 1960 & hrswork2 == 5
+replace uhrswork = 44 if year == 1960 & hrswork2 == 6
+replace uhrswork = 54 if year == 1960 & hrswork2 == 7
+replace uhrswork = 60 if year == 1960 & hrswork2 == 8
+
+drop if wkswork2 == 0
+replace wkswork1 = 7 if year == 1960 & wkswork2 == 1
+replace wkswork1 = 19 if year == 1960 & wkswork2 == 2
+replace wkswork1 = 33 if year == 1960 & wkswork2 == 3
+replace wkswork1 = 43.5 if year == 1960 & wkswork2 == 4
+replace wkswork1 = 48.5 if year == 1960 & wkswork2 == 5
+replace wkswork1 = 51.5 if year == 1960 & wkswork2 == 6
+
+gen log_hr_wage = log(incwage+1/(wkswork1*uhrswork))
+
+gen white = (race == 1)
+replace white = . if (race != 1 & race != 2)
+gen female = (sex == 2)
+```
+
+#### (a)
+```s
+quietly regress log_hr_wage female [pweight = perwt] if year == 2019, r
+eststo a_reg_1
+quietly regress log_hr_wage female age i.educ [pweight = perwt] if year == 2019, r
+eststo a_reg_2
+quietly regress log_hr_wage white [pweight = perwt] if year == 2019, r
+eststo a_reg_3
+quietly regress log_hr_wage white age i.educ [pweight = perwt] if year == 2019, r
+eststo a_reg_4
+
+esttab a_reg_1 a_reg_2, label se 
+esttab  a_reg_3 a_reg_4, label se
+```
+
+It seems that the female wage gap only grows. And I mustve made a mistake somewhere b/c it seems that blacks are making more than whites?!?
+
+#### (b)
+
+It seems from the regression that they are. I don't know how to interpret for blacks (b/c everything there is backwards), but for female it seems that there might also be selection into eductaion.
+
+#### (c)
+
+```s
+quietly regress log_hr_wage female age i.educ i.occ1990 [pweight = perwt] if year == 2019, r
+eststo c_reg_1
+quietly regress log_hr_wage white age i.educ i.occ1990 [pweight = perwt] if year == 2019, r
+eststo c_reg_2
+esttab c_reg_1 c_reg_2, keep(white female) se
+```
+
+This is the regression with occipational controls, it seems there hasn't been much change (although again the coeeficient on white is weird).
+
+#### (d)
+
+Year = 1990
+
+```s
+quietly regress log_hr_wage female [pweight = perwt] if year == 1990, r
+eststo d_reg_1
+quietly regress log_hr_wage female age i.educ [pweight = perwt] if year == 1990, r
+eststo d_reg_2
+quietly regress log_hr_wage female age i.educ i.occ1990 [pweight = perwt] if year == 1990, r
+eststo d_reg_3
+quietly regress log_hr_wage white [pweight = perwt] if year == 1990, r
+eststo d_reg_4
+quietly regress log_hr_wage white age i.educ [pweight = perwt] if year == 1990, r
+eststo d_reg_5
+quietly regress log_hr_wage white age i.educ i.occ1990 [pweight = perwt] if year == 1990, r
+eststo d_reg_6
+
+esttab d_reg_1 d_reg_2 d_reg_3, label se keep(female)
+esttab  d_reg_4 d_reg_5 d_reg_6, label se keep(white)
+```
+
+Year = 1960
+```s
+quietly regress log_hr_wage female [pweight = perwt] if year == 1960, r
+eststo d_reg_7
+quietly regress log_hr_wage female age i.educ [pweight = perwt] if year == 1960, r
+eststo d_reg_8
+quietly regress log_hr_wage female age i.educ i.occ1990 [pweight = perwt] if year == 1960, r
+eststo d_reg_9
+quietly regress log_hr_wage white [pweight = perwt] if year == 1960, r
+eststo d_reg_10
+quietly regress log_hr_wage white age i.educ [pweight = perwt] if year == 1960, r
+eststo d_reg_11
+quietly regress log_hr_wage white age i.educ i.occ1990 [pweight = perwt] if year == 1960, r
+eststo d_reg_12
+
+esttab d_reg_7 d_reg_8 d_reg_9, label se keep(female)
+esttab  d_reg_12 d_reg_11 d_reg_12, label se keep(white)
+```
+
+Column (1) is a regression with no controls, (2) with education controls and (3) with occupation controls. Again the coeeficient on white is weird and now female is all over the place 2. My guess is that the way I calculated the wage was not done very well.

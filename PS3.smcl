@@ -1,0 +1,696 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}C:\Users\MSKle\Desktop\Econometrics-B\PS3.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res} 4 May 2021, 15:22:15
+{txt}
+{com}. //_1
+. clear all
+{res}{txt}
+{com}. use "nswre74.dta"
+{txt}
+{com}. append using "cps1re74.dta", gen(obs)
+{txt}
+{com}. //_2
+. quietly gen age_2 = age^2
+{txt}
+{com}. local i = 1
+{txt}
+{com}. foreach var in age age_2 ed black hisp married nodeg re74 re75 {c -(}
+{txt}  2{com}. quietly regress `var' treat if obs == 0, r
+{txt}  3{com}. eststo a_reg_`i'
+{txt}  4{com}. local ++i
+{txt}  5{com}. {c )-}
+{txt}
+{com}. //_3
+. foreach var in age age_2 ed black hisp married nodeg re74 re75 {c -(}
+{txt}  2{com}. quietly regress `var' treat if obs == 1, r
+{txt}  3{com}. eststo a_reg_`i'
+{txt}  4{com}. local ++i
+{txt}  5{com}. {c )-}
+{txt}
+{com}. //_4
+. forvalues j = 1/3{c -(}
+{txt}  2{com}. local k = 3*(`j')-2
+{txt}  3{com}. local r = 3*(`j')-1
+{txt}  4{com}. local t = 3*(`j')
+{txt}  5{com}. esttab a_reg_`k' a_reg_`r' a_reg_`t', se
+{txt}  6{com}. {c )-}
+{res}
+{txt}{hline 60}
+{txt}                      (1)             (2)             (3)   
+{txt}                      age           age_2              ed   
+{txt}{hline 60}
+{txt}treat       {res}        0.762           40.08           0.257   {txt}
+            {res} {ralign 12:{txt:(}0.684{txt:)}}    {ralign 12:{txt:(}41.38{txt:)}}    {ralign 12:{txt:(}0.179{txt:)}}   {txt}
+
+{txt}_cons       {res}        25.05***        677.3***        10.09***{txt}
+            {res} {ralign 12:{txt:(}0.438{txt:)}}    {ralign 12:{txt:(}26.60{txt:)}}    {ralign 12:{txt:(}0.100{txt:)}}   {txt}
+{txt}{hline 60}
+{txt}N           {res}          445             445             445   {txt}
+{txt}{hline 60}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+{res}
+{txt}{hline 60}
+{txt}                      (1)             (2)             (3)   
+{txt}                    black            hisp         married   
+{txt}{hline 60}
+{txt}treat       {res}       0.0163         -0.0482          0.0353   {txt}
+            {res} {ralign 12:{txt:(}0.0356{txt:)}}    {ralign 12:{txt:(}0.0260{txt:)}}    {ralign 12:{txt:(}0.0365{txt:)}}   {txt}
+
+{txt}_cons       {res}        0.827***        0.108***        0.154***{txt}
+            {res} {ralign 12:{txt:(}0.0235{txt:)}}    {ralign 12:{txt:(}0.0193{txt:)}}    {ralign 12:{txt:(}0.0224{txt:)}}   {txt}
+{txt}{hline 60}
+{txt}N           {res}          445             445             445   {txt}
+{txt}{hline 60}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+{res}
+{txt}{hline 60}
+{txt}                      (1)             (2)             (3)   
+{txt}                    nodeg            re74            re75   
+{txt}{hline 60}
+{txt}treat       {res}       -0.127**        -11.45           265.1   {txt}
+            {res} {ralign 12:{txt:(}0.0407{txt:)}}    {ralign 12:{txt:(}503.5{txt:)}}    {ralign 12:{txt:(}305.0{txt:)}}   {txt}
+
+{txt}_cons       {res}        0.835***       2107.0***       1266.9***{txt}
+            {res} {ralign 12:{txt:(}0.0231{txt:)}}    {ralign 12:{txt:(}352.9{txt:)}}    {ralign 12:{txt:(}192.5{txt:)}}   {txt}
+{txt}{hline 60}
+{txt}N           {res}          445             445             445   {txt}
+{txt}{hline 60}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. //_5
+. forvalues j = 3/6{c -(}
+{txt}  2{com}. local k = 3*(`j')-2
+{txt}  3{com}. local r = 3*(`j')-1
+{txt}  4{com}. local t = 3*(`j')
+{txt}  5{com}. esttab a_reg_`k' a_reg_`r' a_reg_`t', se
+{txt}  6{com}. {c )-}
+{res}
+{txt}{hline 60}
+{txt}                      (1)             (2)             (3)   
+{txt}                    nodeg            re74            re75   
+{txt}{hline 60}
+{txt}treat       {res}       -0.127**        -11.45           265.1   {txt}
+            {res} {ralign 12:{txt:(}0.0407{txt:)}}    {ralign 12:{txt:(}503.5{txt:)}}    {ralign 12:{txt:(}305.0{txt:)}}   {txt}
+
+{txt}_cons       {res}        0.835***       2107.0***       1266.9***{txt}
+            {res} {ralign 12:{txt:(}0.0231{txt:)}}    {ralign 12:{txt:(}352.9{txt:)}}    {ralign 12:{txt:(}192.5{txt:)}}   {txt}
+{txt}{hline 60}
+{txt}N           {res}          445             445             445   {txt}
+{txt}{hline 60}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+{res}
+{txt}{hline 60}
+{txt}                      (1)             (2)             (3)   
+{txt}                      age           age_2              ed   
+{txt}{hline 60}
+{txt}treat       {res}       -7.409***       -508.5***       -1.682***{txt}
+            {res} {ralign 12:{txt:(}0.532{txt:)}}    {ralign 12:{txt:(}32.23{txt:)}}    {ralign 12:{txt:(}0.149{txt:)}}   {txt}
+
+{txt}_cons       {res}        33.23***       1225.9***        12.03***{txt}
+            {res} {ralign 12:{txt:(}0.0873{txt:)}}    {ralign 12:{txt:(}6.206{txt:)}}    {ralign 12:{txt:(}0.0227{txt:)}}   {txt}
+{txt}{hline 60}
+{txt}N           {res}        16177           16177           16177   {txt}
+{txt}{hline 60}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+{res}
+{txt}{hline 60}
+{txt}                      (1)             (2)             (3)   
+{txt}                    black            hisp         married   
+{txt}{hline 60}
+{txt}treat       {res}        0.770***      -0.0126          -0.523***{txt}
+            {res} {ralign 12:{txt:(}0.0268{txt:)}}    {ralign 12:{txt:(}0.0175{txt:)}}    {ralign 12:{txt:(}0.0290{txt:)}}   {txt}
+
+{txt}_cons       {res}       0.0735***       0.0720***        0.712***{txt}
+            {res} {ralign 12:{txt:(}0.00206{txt:)}}    {ralign 12:{txt:(}0.00204{txt:)}}    {ralign 12:{txt:(}0.00358{txt:)}}   {txt}
+{txt}{hline 60}
+{txt}N           {res}        16177           16177           16177   {txt}
+{txt}{hline 60}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+{res}
+{txt}{hline 60}
+{txt}                      (1)             (2)             (3)   
+{txt}                    nodeg            re74            re75   
+{txt}{hline 60}
+{txt}treat       {res}        0.412***     -11921.2***     -12118.7***{txt}
+            {res} {ralign 12:{txt:(}0.0336{txt:)}}    {ralign 12:{txt:(}366.2{txt:)}}    {ralign 12:{txt:(}247.2{txt:)}}   {txt}
+
+{txt}_cons       {res}        0.296***      14016.8***      13650.8***{txt}
+            {res} {ralign 12:{txt:(}0.00361{txt:)}}    {ralign 12:{txt:(}75.68{txt:)}}    {ralign 12:{txt:(}73.31{txt:)}}   {txt}
+{txt}{hline 60}
+{txt}N           {res}        16177           16177           16177   {txt}
+{txt}{hline 60}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. //_6
+. quietly regress re78 treat if obs == 0, r
+{txt}
+{com}. eststo b_reg_1
+{txt}
+{com}. quietly regress re78 treat age age_2 ed nodeg married black hisp  if obs == 0, r
+{txt}
+{com}. eststo b_reg_2
+{txt}
+{com}. quietly regress re78 treat age age_2 ed nodeg married black hisp re74 re75  if obs == 0, r
+{txt}
+{com}. eststo b_reg_3
+{txt}
+{com}. //_7
+. quietly regress re78 treat if obs == 1, r
+{txt}
+{com}. eststo b_reg_4
+{txt}
+{com}. quietly regress re78 treat age age_2 ed nodeg married black if obs == 1, r
+{txt}
+{com}. eststo b_reg_5
+{txt}
+{com}. quietly regress re78 treat age age_2 ed nodeg married black hisp re74 re75 if obs == 1, r
+{txt}
+{com}. eststo b_reg_6
+{txt}
+{com}. //_8
+. esttab b_reg_1 b_reg_2 b_reg_3, se
+{res}
+{txt}{hline 60}
+{txt}                      (1)             (2)             (3)   
+{txt}                     re78            re78            re78   
+{txt}{hline 60}
+{txt}treat       {res}       1794.3**        1670.0*         1675.9*  {txt}
+            {res} {ralign 12:{txt:(}670.8{txt:)}}    {ralign 12:{txt:(}672.5{txt:)}}    {ralign 12:{txt:(}676.9{txt:)}}   {txt}
+
+{txt}age         {res}                        178.3           141.7   {txt}
+            {res}                 {ralign 12:{txt:(}252.4{txt:)}}    {ralign 12:{txt:(}255.1{txt:)}}   {txt}
+
+{txt}age_2       {res}                       -2.084          -1.435   {txt}
+            {res}                 {ralign 12:{txt:(}4.023{txt:)}}    {ralign 12:{txt:(}4.069{txt:)}}   {txt}
+
+{txt}ed          {res}                        378.1           385.0*  {txt}
+            {res}                 {ralign 12:{txt:(}193.5{txt:)}}    {ralign 12:{txt:(}193.8{txt:)}}   {txt}
+
+{txt}nodeg       {res}                       -106.8          -55.54   {txt}
+            {res}                 {ralign 12:{txt:(}1050.5{txt:)}}    {ralign 12:{txt:(}1037.9{txt:)}}   {txt}
+
+{txt}married     {res}                        82.76          -184.9   {txt}
+            {res}                 {ralign 12:{txt:(}934.2{txt:)}}    {ralign 12:{txt:(}913.8{txt:)}}   {txt}
+
+{txt}black       {res}                      -2212.5*        -2155.6*  {txt}
+            {res}                 {ralign 12:{txt:(}996.7{txt:)}}    {ralign 12:{txt:(}1010.9{txt:)}}   {txt}
+
+{txt}hisp        {res}                        118.6           187.3   {txt}
+            {res}                 {ralign 12:{txt:(}1356.6{txt:)}}    {ralign 12:{txt:(}1371.6{txt:)}}   {txt}
+
+{txt}re74        {res}                                       0.0815   {txt}
+            {res}                                 {ralign 12:{txt:(}0.107{txt:)}}   {txt}
+
+{txt}re75        {res}                                       0.0508   {txt}
+            {res}                                 {ralign 12:{txt:(}0.124{txt:)}}   {txt}
+
+{txt}_cons       {res}       4554.8***       -422.0          -307.0   {txt}
+            {res} {ralign 12:{txt:(}340.2{txt:)}}    {ralign 12:{txt:(}5024.8{txt:)}}    {ralign 12:{txt:(}5044.8{txt:)}}   {txt}
+{txt}{hline 60}
+{txt}N           {res}          445             445             445   {txt}
+{txt}{hline 60}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. 
+. //_9
+. esttab b_reg_4 b_reg_5 b_reg_6, se
+{res}
+{txt}{hline 60}
+{txt}                      (1)             (2)             (3)   
+{txt}                     re78            re78            re78   
+{txt}{hline 60}
+{txt}treat       {res}      -8497.5***      -3468.2***        793.6   {txt}
+            {res} {ralign 12:{txt:(}581.9{txt:)}}    {ralign 12:{txt:(}611.7{txt:)}}    {ralign 12:{txt:(}618.6{txt:)}}   {txt}
+
+{txt}age         {res}                        934.3***       -233.7***{txt}
+            {res}                 {ralign 12:{txt:(}49.99{txt:)}}    {ralign 12:{txt:(}40.72{txt:)}}   {txt}
+
+{txt}age_2       {res}                       -12.07***        1.814** {txt}
+            {res}                 {ralign 12:{txt:(}0.701{txt:)}}    {ralign 12:{txt:(}0.558{txt:)}}   {txt}
+
+{txt}ed          {res}                        238.8***        166.8***{txt}
+            {res}                 {ralign 12:{txt:(}38.14{txt:)}}    {ralign 12:{txt:(}28.71{txt:)}}   {txt}
+
+{txt}nodeg       {res}                      -1094.4***        311.8   {txt}
+            {res}                 {ralign 12:{txt:(}226.5{txt:)}}    {ralign 12:{txt:(}176.4{txt:)}}   {txt}
+
+{txt}married     {res}                       3205.8***        224.3   {txt}
+            {res}                 {ralign 12:{txt:(}192.3{txt:)}}    {ralign 12:{txt:(}152.4{txt:)}}   {txt}
+
+{txt}black       {res}                      -2231.8***       -790.6***{txt}
+            {res}                 {ralign 12:{txt:(}267.7{txt:)}}    {ralign 12:{txt:(}197.8{txt:)}}   {txt}
+
+{txt}hisp        {res}                                       -176.0   {txt}
+            {res}                                 {ralign 12:{txt:(}218.3{txt:)}}   {txt}
+
+{txt}re74        {res}                                        0.295***{txt}
+            {res}                                 {ralign 12:{txt:(}0.0152{txt:)}}   {txt}
+
+{txt}re75        {res}                                        0.471***{txt}
+            {res}                                 {ralign 12:{txt:(}0.0153{txt:)}}   {txt}
+
+{txt}_cons       {res}      14846.7***      -6063.6***       7634.3***{txt}
+            {res} {ralign 12:{txt:(}76.29{txt:)}}    {ralign 12:{txt:(}920.1{txt:)}}    {ralign 12:{txt:(}737.8{txt:)}}   {txt}
+{txt}{hline 60}
+{txt}N           {res}        16177           16177           16177   {txt}
+{txt}{hline 60}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. //_10
+. quietly regress treat age age_2 ed nodeg married black re74 re75 if obs == 1, r
+{txt}
+{com}. eststo c_reg_1
+{txt}
+{com}. quietly predict lm_prop
+{txt}
+{com}. quietly logit treat age age_2 ed nodeg married black re74 re75 if obs == 1, vce(robust)
+{txt}
+{com}. eststo c_reg_2
+{txt}
+{com}. quietly predict log_prop
+{txt}
+{com}. quietly probit treat age age_2 ed nodeg married black re74 re75 if obs == 1, vce(robust)
+{txt}
+{com}. eststo c_reg_3
+{txt}
+{com}. quietly predict pro_prop
+{txt}
+{com}. //_11
+. esttab c_reg_1 c_reg_2 c_reg_3, se
+{res}
+{txt}{hline 60}
+{txt}                      (1)             (2)             (3)   
+{txt}                    treat           treat           treat   
+{txt}{hline 60}
+{res}main                                                        {txt}
+{txt}age         {res}      0.00390***        0.745***        0.373***{txt}
+            {res} {ralign 12:{txt:(}0.000738{txt:)}}    {ralign 12:{txt:(}0.0906{txt:)}}    {ralign 12:{txt:(}0.0424{txt:)}}   {txt}
+
+{txt}age_2       {res}   -0.0000551***      -0.0121***     -0.00607***{txt}
+            {res} {ralign 12:{txt:(}0.00000953{txt:)}}    {ralign 12:{txt:(}0.00158{txt:)}}    {ralign 12:{txt:(}0.000720{txt:)}}   {txt}
+
+{txt}ed          {res}     0.000805*        -0.0372         -0.0225   {txt}
+            {res} {ralign 12:{txt:(}0.000350{txt:)}}    {ralign 12:{txt:(}0.0386{txt:)}}    {ralign 12:{txt:(}0.0184{txt:)}}   {txt}
+
+{txt}nodeg       {res}       0.0174***        1.453***        0.676***{txt}
+            {res} {ralign 12:{txt:(}0.00302{txt:)}}    {ralign 12:{txt:(}0.282{txt:)}}    {ralign 12:{txt:(}0.138{txt:)}}   {txt}
+
+{txt}married     {res}      -0.0182***       -1.442***       -0.672***{txt}
+            {res} {ralign 12:{txt:(}0.00258{txt:)}}    {ralign 12:{txt:(}0.251{txt:)}}    {ralign 12:{txt:(}0.124{txt:)}}   {txt}
+
+{txt}black       {res}        0.107***        3.574***        1.683***{txt}
+            {res} {ralign 12:{txt:(}0.00825{txt:)}}    {ralign 12:{txt:(}0.213{txt:)}}    {ralign 12:{txt:(}0.0934{txt:)}}   {txt}
+
+{txt}re74        {res} -0.000000295      -0.0000647      -0.0000277   {txt}
+            {res} {ralign 12:{txt:(}0.000000159{txt:)}}    {ralign 12:{txt:(}0.0000392{txt:)}}    {ralign 12:{txt:(}0.0000181{txt:)}}   {txt}
+
+{txt}re75        {res} -0.000000676***    -0.000217***   -0.0000969***{txt}
+            {res} {ralign 12:{txt:(}0.000000137{txt:)}}    {ralign 12:{txt:(}0.0000434{txt:)}}    {ralign 12:{txt:(}0.0000207{txt:)}}   {txt}
+
+{txt}_cons       {res}      -0.0484***       -14.65***       -7.286***{txt}
+            {res} {ralign 12:{txt:(}0.0121{txt:)}}    {ralign 12:{txt:(}1.370{txt:)}}    {ralign 12:{txt:(}0.656{txt:)}}   {txt}
+{txt}{hline 60}
+{txt}N           {res}        16177           16177           16177   {txt}
+{txt}{hline 60}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. //_12
+. kdensity pro_prop, nograph generate(x fx)
+{txt}
+{com}. kdensity pro_prop if obs == 1 & treat == 1, nograph generate(fx0) at (x)
+{txt}
+{com}. kdensity pro_prop if obs == 1 & treat == 0, nograph generate(fx1) at (x)
+{txt}
+{com}. label var fx0 "Treatment"
+{txt}
+{com}. label var fx1 "Control"
+{txt}
+{com}. line fx0 fx1 x, sort ytitle(Density)
+{res}{txt}
+{com}. graph export dens.pdf, replace
+{txt}(file dens.pdf written in PDF format)
+
+{com}. //_13
+. kdensity pro_prop, nograph generate(y gy)
+{txt}
+{com}. kdensity pro_prop if obs == 1 & treat == 1 & pro_prop > 0.1, nograph generate(gy0) at (y)
+{txt}
+{com}. kdensity pro_prop if obs == 1 & treat == 0 & pro_prop > 0.1, nograph generate(gy1) at (y)
+{txt}
+{com}. label var gy0 "Treatment"
+{txt}
+{com}. label var gy1 "Control"
+{txt}
+{com}. line gy0 gy1 y, sort ytitle(Density >0.1)
+{res}{txt}
+{com}. graph export dens2.pdf, replace
+{txt}(file dens2.pdf written in PDF format)
+
+{com}. //_14
+. quietly regress re78 treat age age_2 ed nodeg married black hisp re74 re75  if obs == 0 & pro_prop > 0.1, r
+{txt}
+{com}. eststo d_reg_1
+{txt}
+{com}. quietly regress re78 treat age age_2 ed nodeg married black hisp re74 re75  if obs == 1 & pro_prop > 0.1, r
+{txt}
+{com}. eststo d_reg_2
+{txt}
+{com}. quietly regress re78 treat age age_2 ed nodeg married black hisp re74 re75  if obs == 0 & pro_prop > 0.2, r
+{txt}
+{com}. eststo d_reg_3
+{txt}
+{com}. quietly regress re78 treat age age_2 ed nodeg married black hisp re74 re75  if obs == 1 & pro_prop > 0.2, r
+{txt}
+{com}. eststo d_reg_4
+{txt}
+{com}. esttab d_reg_1 d_reg_2 d_reg_3 d_reg_4, se
+{res}
+{txt}{hline 76}
+{txt}                      (1)             (2)             (3)             (4)   
+{txt}                     re78            re78            re78            re78   
+{txt}{hline 76}
+{txt}treat       {res}       1943.8*         1463.1*         2268.8**        1740.2*  {txt}
+            {res} {ralign 12:{txt:(}782.0{txt:)}}    {ralign 12:{txt:(}714.4{txt:)}}    {ralign 12:{txt:(}844.7{txt:)}}    {ralign 12:{txt:(}813.2{txt:)}}   {txt}
+
+{txt}age         {res}        32.73           114.1           33.09           148.6   {txt}
+            {res} {ralign 12:{txt:(}360.9{txt:)}}    {ralign 12:{txt:(}342.5{txt:)}}    {ralign 12:{txt:(}419.4{txt:)}}    {ralign 12:{txt:(}495.0{txt:)}}   {txt}
+
+{txt}age_2       {res}        0.637          -1.973           0.686          -3.711   {txt}
+            {res} {ralign 12:{txt:(}6.094{txt:)}}    {ralign 12:{txt:(}5.682{txt:)}}    {ralign 12:{txt:(}7.245{txt:)}}    {ralign 12:{txt:(}8.567{txt:)}}   {txt}
+
+{txt}ed          {res}        494.8*          324.9*          433.9           310.8   {txt}
+            {res} {ralign 12:{txt:(}218.4{txt:)}}    {ralign 12:{txt:(}132.6{txt:)}}    {ralign 12:{txt:(}239.0{txt:)}}    {ralign 12:{txt:(}195.2{txt:)}}   {txt}
+
+{txt}nodeg       {res}        453.1           57.75          -298.1         -1025.9   {txt}
+            {res} {ralign 12:{txt:(}1225.2{txt:)}}    {ralign 12:{txt:(}950.8{txt:)}}    {ralign 12:{txt:(}1627.7{txt:)}}    {ralign 12:{txt:(}1556.9{txt:)}}   {txt}
+
+{txt}married     {res}       -78.79          -503.9          -574.6           60.13   {txt}
+            {res} {ralign 12:{txt:(}1054.4{txt:)}}    {ralign 12:{txt:(}852.1{txt:)}}    {ralign 12:{txt:(}1317.5{txt:)}}    {ralign 12:{txt:(}1286.7{txt:)}}   {txt}
+
+{txt}black       {res}      -5020.1***       2054.5               0               0   {txt}
+            {res} {ralign 12:{txt:(}686.1{txt:)}}    {ralign 12:{txt:(}1211.8{txt:)}}    {ralign 12:{txt:(}.{txt:)}}    {ralign 12:{txt:(}.{txt:)}}   {txt}
+
+{txt}hisp        {res}       2847.8          6206.8               0               0   {txt}
+            {res} {ralign 12:{txt:(}3645.6{txt:)}}    {ralign 12:{txt:(}3471.8{txt:)}}    {ralign 12:{txt:(}.{txt:)}}    {ralign 12:{txt:(}.{txt:)}}   {txt}
+
+{txt}re74        {res}       0.0914         -0.0343          0.0729         -0.0590   {txt}
+            {res} {ralign 12:{txt:(}0.112{txt:)}}    {ralign 12:{txt:(}0.0943{txt:)}}    {ralign 12:{txt:(}0.200{txt:)}}    {ralign 12:{txt:(}0.136{txt:)}}   {txt}
+
+{txt}re75        {res}       -0.143           0.716***      -0.0109           0.707***{txt}
+            {res} {ralign 12:{txt:(}0.162{txt:)}}    {ralign 12:{txt:(}0.122{txt:)}}    {ralign 12:{txt:(}0.248{txt:)}}    {ralign 12:{txt:(}0.188{txt:)}}   {txt}
+
+{txt}_cons       {res}       2363.1         -2999.7         -1553.9           321.6   {txt}
+            {res} {ralign 12:{txt:(}6626.3{txt:)}}    {ralign 12:{txt:(}6008.6{txt:)}}    {ralign 12:{txt:(}7703.8{txt:)}}    {ralign 12:{txt:(}7691.2{txt:)}}   {txt}
+{txt}{hline 76}
+{txt}N           {res}          356             502             303             324   {txt}
+{txt}{hline 76}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. //_15
+. *teffects psmatch (re78) (treat age age_2 ed nodeg married black hisp re74 re75, logit) if obs == 0 & log_prop > 0.1, vce(robust)
+. *eststo e_reg_1
+. teffects psmatch (re78) (treat age age_2 ed nodeg married black hisp re74 re75, probit) if obs == 0 & pro_prop > 0.2, vce(robust)
+{txt}note: black omitted because of collinearity
+note: hisp omitted because of collinearity
+{res}
+{txt}Treatment-effects estimation{col 48}Number of obs {col 67}= {res}       303
+{txt:Estimator}{col 16}:{res: propensity-score matching}{col 48}{txt:Matches: requested }{col 67}{txt:=}          1
+{txt:Outcome model}{col 16}:{res: matching}{txt}{col 63}min {col 67}= {res}         1
+{txt:Treatment model}{col 16}:{res: probit}{col 63}{txt:max }{col 67}{txt:=}          8
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}   AI Robust
+{col 1}        re78{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}ATE          {txt}{c |}
+{space 7}treat {c |}
+{space 3}(1 vs 0)  {c |}{col 14}{res}{space 2} 2239.205{col 26}{space 2} 1031.912{col 37}{space 1}    2.17{col 46}{space 3}0.030{col 54}{space 4} 216.6953{col 67}{space 3} 4261.715
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. eststo e_reg_2
+{txt}
+{com}. esttab e_reg_2, se
+{res}
+{txt}{hline 28}
+{txt}                      (1)   
+{txt}                     re78   
+{txt}{hline 28}
+{res}ATE                         {txt}
+{txt}r1vs0.treat {res}       2239.2*  {txt}
+            {res} {ralign 12:{txt:(}1031.9{txt:)}}   {txt}
+{txt}{hline 28}
+{txt}N           {res}          303   {txt}
+{txt}{hline 28}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. //_16
+. clear all
+{res}{txt}
+{com}. use "IPUMS.dta"
+{txt}
+{com}. 
+. *clean data*
+. drop if (year == 1960 & hrswork2 <= 1) | (year != 1960 & uhrswork <= 14)
+{txt}(4,693,543 observations deleted)
+
+{com}. replace uhrswork = 22 if year == 1960 & hrswork2 == 2
+{txt}(189,462 real changes made)
+
+{com}. replace uhrswork = 32 if year == 1960 & hrswork2 == 3
+{txt}(122,703 real changes made)
+
+{com}. replace uhrswork = 37 if year == 1960 & hrswork2 == 4
+{txt}(205,807 real changes made)
+
+{com}. replace uhrswork = 40 if year == 1960 & hrswork2 == 5
+{txt}(1,304,713 real changes made)
+
+{com}. replace uhrswork = 44 if year == 1960 & hrswork2 == 6
+{txt}(538,926 real changes made)
+
+{com}. replace uhrswork = 54 if year == 1960 & hrswork2 == 7
+{txt}(252,038 real changes made)
+
+{com}. replace uhrswork = 60 if year == 1960 & hrswork2 == 8
+{txt}(287,878 real changes made)
+
+{com}. 
+. drop if wkswork2 == 0
+{txt}(57,551 observations deleted)
+
+{com}. replace wkswork1 = 7 if year == 1960 & wkswork2 == 1
+{txt}(88,530 real changes made)
+
+{com}. replace wkswork1 = 19 if year == 1960 & wkswork2 == 2
+{txt}(142,221 real changes made)
+
+{com}. replace wkswork1 = 33 if year == 1960 & wkswork2 == 3
+{txt}(225,725 real changes made)
+
+{com}. replace wkswork1 = 43.5 if year == 1960 & wkswork2 == 4
+{txt}variable {bf}wkswork1{sf} was {bf}{res}byte{sf}{txt} now {bf}{res}float{sf}
+{txt}(259,325 real changes made)
+
+{com}. replace wkswork1 = 48.5 if year == 1960 & wkswork2 == 5
+{txt}(175,594 real changes made)
+
+{com}. replace wkswork1 = 51.5 if year == 1960 & wkswork2 == 6
+{txt}(1,952,581 real changes made)
+
+{com}. 
+. gen log_hr_wage = log(incwage+1/(wkswork1*uhrswork))
+{txt}
+{com}. 
+. gen white = (race == 1)
+{txt}
+{com}. replace white = . if (race != 1 & race != 2)
+{txt}(643,463 real changes made, 643,463 to missing)
+
+{com}. gen female = (sex == 2)
+{txt}
+{com}. //_17
+. quietly regress log_hr_wage female [pweight = perwt] if year == 2019, r
+{txt}
+{com}. eststo a_reg_1
+{txt}
+{com}. quietly regress log_hr_wage female age i.educ [pweight = perwt] if year == 2019, r
+{txt}
+{com}. eststo a_reg_2
+{txt}
+{com}. quietly regress log_hr_wage white [pweight = perwt] if year == 2019, r
+{txt}
+{com}. eststo a_reg_3
+{txt}
+{com}. quietly regress log_hr_wage white age i.educ [pweight = perwt] if year == 2019, r
+{txt}
+{com}. eststo a_reg_4
+{txt}
+{com}. 
+. esttab a_reg_1 a_reg_2, label se 
+{res}
+{txt}{hline 52}
+{txt}                              (1)             (2)   
+{txt}                      log_hr_wage     log_hr_wage   
+{txt}{hline 52}
+{txt}female              {res}      -0.0453***       -0.159***{txt}
+                    {res} {ralign 12:{txt:(}0.00846{txt:)}}    {ralign 12:{txt:(}0.00837{txt:)}}   {txt}
+
+{txt}age                 {res}                     0.000721*  {txt}
+                    {res}                 {ralign 12:{txt:(}0.000312{txt:)}}   {txt}
+
+{txt}n/a or no schooling {res}                            0   {txt}
+                    {res}                 {ralign 12:{txt:(}.{txt:)}}   {txt}
+
+{txt}nursery school to ~4{res}                       -0.244*  {txt}
+                    {res}                 {ralign 12:{txt:(}0.109{txt:)}}   {txt}
+
+{txt}grade 5, 6, 7, or 8 {res}                       -0.524***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0726{txt:)}}   {txt}
+
+{txt}grade 9             {res}                       -0.492***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0801{txt:)}}   {txt}
+
+{txt}grade 10            {res}                       -0.409***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0665{txt:)}}   {txt}
+
+{txt}grade 11            {res}                       -0.222***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0596{txt:)}}   {txt}
+
+{txt}grade 12            {res}                        0.503***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0526{txt:)}}   {txt}
+
+{txt}1 year of college   {res}                        0.694***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0531{txt:)}}   {txt}
+
+{txt}2 years of college  {res}                        1.037***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0536{txt:)}}   {txt}
+
+{txt}4 years of college  {res}                        1.448***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0526{txt:)}}   {txt}
+
+{txt}5+ years of college {res}                        1.919***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0528{txt:)}}   {txt}
+
+{txt}Constant            {res}        9.600***        8.718***{txt}
+                    {res} {ralign 12:{txt:(}0.00633{txt:)}}    {ralign 12:{txt:(}0.0538{txt:)}}   {txt}
+{txt}{hline 52}
+{txt}Observations        {res}      1457373         1457373   {txt}
+{txt}{hline 52}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. esttab  a_reg_3 a_reg_4, label se
+{res}
+{txt}{hline 52}
+{txt}                              (1)             (2)   
+{txt}                      log_hr_wage     log_hr_wage   
+{txt}{hline 52}
+{txt}white               {res}      -0.0856***       -0.190***{txt}
+                    {res} {ralign 12:{txt:(}0.0123{txt:)}}    {ralign 12:{txt:(}0.0123{txt:)}}   {txt}
+
+{txt}age                 {res}                      0.00155***{txt}
+                    {res}                 {ralign 12:{txt:(}0.000332{txt:)}}   {txt}
+
+{txt}n/a or no schooling {res}                            0   {txt}
+                    {res}                 {ralign 12:{txt:(}.{txt:)}}   {txt}
+
+{txt}nursery school to ~4{res}                       -0.313*  {txt}
+                    {res}                 {ralign 12:{txt:(}0.143{txt:)}}   {txt}
+
+{txt}grade 5, 6, 7, or 8 {res}                       -0.704***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0929{txt:)}}   {txt}
+
+{txt}grade 9             {res}                       -0.465***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0971{txt:)}}   {txt}
+
+{txt}grade 10            {res}                       -0.465***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0809{txt:)}}   {txt}
+
+{txt}grade 11            {res}                       -0.256***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0736{txt:)}}   {txt}
+
+{txt}grade 12            {res}                        0.484***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0674{txt:)}}   {txt}
+
+{txt}1 year of college   {res}                        0.645***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0679{txt:)}}   {txt}
+
+{txt}2 years of college  {res}                        1.005***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0683{txt:)}}   {txt}
+
+{txt}4 years of college  {res}                        1.414***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0674{txt:)}}   {txt}
+
+{txt}5+ years of college {res}                        1.838***{txt}
+                    {res}                 {ralign 12:{txt:(}0.0677{txt:)}}   {txt}
+
+{txt}Constant            {res}        9.664***        8.814***{txt}
+                    {res} {ralign 12:{txt:(}0.0113{txt:)}}    {ralign 12:{txt:(}0.0689{txt:)}}   {txt}
+{txt}{hline 52}
+{txt}Observations        {res}      1256989         1256989   {txt}
+{txt}{hline 52}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. //_18
+. quietly regress log_hr_wage female age i.educ i.occ1990 [pweight = perwt] if year == 2019, r
+{txt}
+{com}. eststo c_reg_1
+{txt}
+{com}. quietly regress log_hr_wage white age i.educ i.occ1990 [pweight = perwt] if year == 2019, r
+{txt}
+{com}. eststo c_reg_2
+{txt}
+{com}. esttab c_reg_1 c_reg_2, keep(white female) se
+{res}
+{txt}{hline 44}
+{txt}                      (1)             (2)   
+{txt}              log_hr_wage     log_hr_wage   
+{txt}{hline 44}
+{txt}female      {res}       -0.131***                {txt}
+            {res} {ralign 12:{txt:(}0.00885{txt:)}}                   {txt}
+
+{txt}white       {res}                       -0.156***{txt}
+            {res}                 {ralign 12:{txt:(}0.0120{txt:)}}   {txt}
+{txt}{hline 44}
+{txt}N           {res}      1457373         1256989   {txt}
+{txt}{hline 44}
+{txt}Standard errors in parentheses
+{txt}* p<0.05, ** p<0.01, *** p<0.001
+
+{com}. //_19
+. quietly regress log_hr_wage female [pweight = perwt] if year == 1990, r
+{txt}
+{com}. eststo d_reg_1
+{txt}
+{com}. quietly regress log_hr_wage female age i.educ [pweight = perwt] if year == 1990, r
+{txt}
+{com}. eststo d_reg_2
+{txt}
+{com}. quietly regress log_hr_wage female age i.educ i.occ1990 [pweight = perwt] if year == 1990, r
+{txt}
+{com}. eststo d_reg_3
+{txt}
+{com}. quietly regress log_hr_wage white [pweight = perwt] if year == 1990, r
+{txt}
+{com}. eststo d_reg_4
+{txt}
+{com}. quietly regress log_hr_wage white age i.educ [pweight = perwt] if year == 1990, r
+{txt}
+{com}. eststo d_reg_5
+{txt}
+{com}. 
